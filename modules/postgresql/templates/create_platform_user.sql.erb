@@ -1,0 +1,14 @@
+create user <%= @platform %> with
+password '<%= @platform_psswd %>';
+    
+create tablespace <%= @platform %>
+    owner <%= @platform %>
+    location '<%= @tablespacedir %><%= @platform %>';
+
+CREATE DATABASE <%= @platform %> 
+OWNER <%= @platform %> 
+TABLESPACE <%= @platform %>;
+  
+\c <%= @platform %> 
+
+create schema <%= @platform %> AUTHORIZATION <%= @platform %>;
