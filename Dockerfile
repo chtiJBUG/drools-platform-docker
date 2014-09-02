@@ -1,47 +1,28 @@
 FROM ubuntu:14.04
 MAINTAINER Liudmyla Lytvynova
 
+ENV REFRESHED_AT 2014-07-24
 RUN apt-get update
 RUN apt-get -y upgrade
-RUN apt-get install nano
 
-#to install wget
-RUN apt-get install -y wget
+# avoid debconf and initrd
+ENV DEBIAN_FRONTEND noninteractive
+ENV INITRD No
 
-# to install puppet
-RUN wget https://apt.puppetlabs.com/puppetlabs-release-trusty.deb
-RUN dpkg -i puppetlabs-release-trusty.deb
-RUN apt-get update
-RUN apt-get install -y puppet
+#install
+RUN apt-get install -y wget openssh-server supervisor openjdk-7-jdk tomcat7 postgresql-9.3 
+RUN mkdir -p /var/run/sshd /var/log/supervisor
 
-# to copy Puppet code into container
-ADD drools_platform_puppet /drools_platform_puppet
+# set root password
+RUN echo 'root:root' |chpasswd
 
-#to run Puppet code
-RUN puppet apply drools_platform_puppet/manifests/site.pp --confdir=drools_platform_puppet  --modulepath=drools_platform_puppet/modules --verbose
+#to allow ssh connection, otherwise you'll have 'permission denied" (for Ubuntu 14.04)
+RUN sed --in-place=.bak 's/without-password/yes/' /etc/ssh/sshd_config  
 
-USER postgres
-# Creates DB and users 
-        
-RUN    /etc/init.d/postgresql start && psql -f /tmp/create_guvnor_user.sql &&  psql -f /tmp/create_platform_user.sql
-
-# Adjust PostgreSQL configuration so that remote connections to the
-# database are possible.
-
-RUN echo "host all  all    0.0.0.0/0  md5" >> /etc/postgresql/9.3/main/pg_hba.conf
-
-# And add ``listen_addresses`` to ``/etc/postgresql/9.3/main/postgresql.conf``
-RUN echo "listen_addresses='*'" >> /etc/postgresql/9.3/main/postgresql.conf
-
-# Expose the PostgreSQL port
-EXPOSE 5432
-
-# Add VOLUMEs to allow backup of config, logs and databases
-#VOLUME  ["/etc/postgresql", "/var/log/postgresql", "/var/lib/postgresql"]
-
-# Set the default command to run when starting the container
-CMD ["/usr/lib/postgresql/9.3/bin/postgres", "-D", "/var/lib/postgresql/9.3/main", "-c", "config_file=/etc/postgresql/9.3/main/postgresql.conf"]
-
+#setup tomcat7
+ADD myconfig /home/guvnor/myconfig
+ADD setenv.sh /usr/share/tomcat7/bin/setenv.sh
+RUN chmod 755 /usr/share/tomcat7/bin/setenv.sh
 ENV CATALINA_HOME /usr/share/tomcat7
 ENV CATALINA_BASE /var/lib/tomcat7
 ENV CATALINA_PID /var/run/tomcat7.pid
@@ -49,9 +30,48 @@ ENV CATALINA_SH /usr/share/tomcat7/bin/catalina.sh
 ENV CATALINA_TMPDIR /tmp/tomcat7-tomcat7-tmpRUN
 RUN mkdir -p $CATALINA_TMPDIR
 
-RUN service postgresql start
+# setup postgresql
+ADD set-psql-password.sh /tmp/set-psql-password.sh
 
+RUN sed -i "/^#listen_addresses/i listen_addresses='*'" /etc/postgresql/9.3/main/postgresql.conf
+RUN sed -i "/^# DO NOT DISABLE\!/i # Allow access from any IP address" /etc/postgresql/9.3/main/pg_hba.conf
+RUN sed -i "/^# DO NOT DISABLE\!/i host all all 0.0.0.0/0 md5\n\n\n" /etc/postgresql/9.3/main/pg_hba.conf
+
+# to install puppet
+RUN wget https://apt.puppetlabs.com/puppetlabs-release-trusty.deb
+RUN dpkg -i puppetlabs-release-trusty.deb
+RUN apt-get update && apt-get install -y puppet
+
+# to copy Puppet code into container
+ADD drools_platform_puppet /drools_platform_puppet 
+
+#to run Puppet code
+RUN puppet apply drools_platform_puppet/manifests/site.pp --confdir=drools_platform_puppet  --modulepath=drools_platform_puppet/modules --verbose
+
+# Add VOLUMEs to allow backup of config, logs and databases
+#VOLUME  ["/etc/postgresql", "/var/log/postgresql", "/var/lib/postgresql"]
 #VOLUME [ "/var/lib/tomcat7/webapps/" ]
+
+ADD supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+
+USER postgres
+
+# Creates DB and users 
+RUN  /etc/init.d/postgresql start && psql -f /tmp/create_guvnor_user.sql &&  psql -f /tmp/create_platform_user.sql
+
 USER root
+
+# clean packages
+RUN apt-get clean
+RUN rm -rf /var/cache/apt/archives/* /var/lib/apt/lists/*
+
+# tomcat7
 EXPOSE 8080
-ENTRYPOINT [ "/usr/share/tomcat7/bin/catalina.sh", "run" ]
+
+# Expose the PostgreSQL and SSH port
+EXPOSE 22
+EXPOSE 5432
+
+RUN /bin/sh /tmp/set-psql-password.sh
+
+CMD ["/usr/bin/supervisord"]
