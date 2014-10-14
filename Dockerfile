@@ -21,8 +21,6 @@ RUN sed --in-place=.bak 's/without-password/yes/' /etc/ssh/sshd_config
 
 #setup tomcat7
 ADD myconfig /home/guvnor/myconfig
-ADD setenv.sh /usr/share/tomcat7/bin/setenv.sh
-RUN chmod 755 /usr/share/tomcat7/bin/setenv.sh
 ENV CATALINA_HOME /usr/share/tomcat7
 ENV CATALINA_BASE /var/lib/tomcat7
 ENV CATALINA_PID /var/run/tomcat7.pid
@@ -46,7 +44,7 @@ RUN apt-get update && apt-get install -y puppet
 ADD drools_platform_puppet /drools_platform_puppet 
 
 #to run Puppet code
-RUN puppet apply drools_platform_puppet/manifests/site.pp --confdir=drools_platform_puppet  --modulepath=drools_platform_puppet/modules --verbose
+RUN puppet apply drools_platform_puppet/manifests/site.pp --confdir=drools_platform_puppet/  --modulepath=drools_platform_puppet/modules --libdir=drools_platform_puppet/modules/lib --verbose
 
 # Add VOLUMEs to allow backup of config, logs and databases
 #VOLUME  ["/etc/postgresql", "/var/log/postgresql", "/var/lib/postgresql"]
@@ -57,7 +55,7 @@ ADD supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 USER postgres
 
 # Creates DB and users 
-RUN  /etc/init.d/postgresql start && psql -f /tmp/create_guvnor_user.sql &&  psql -f /tmp/create_platform_user.sql
+RUN  /etc/init.d/postgresql start && psql -f /tmp/create_guvnor_user.sql &&  psql -f /tmp/create_platform_user.sql &&  psql -f /tmp/create_guvnor_security.sql
 
 USER root
 
@@ -75,3 +73,4 @@ EXPOSE 5432
 RUN /bin/sh /tmp/set-psql-password.sh
 
 CMD ["/usr/bin/supervisord"]
+

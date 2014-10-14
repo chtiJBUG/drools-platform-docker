@@ -9,7 +9,7 @@ define lib::wget ($src, $destination, $timeout = 10, $user = 'root') {
   exec { "${name}wget":
     cwd     => "$destination", # $destination is the absolute path of the direcotry where the command will be executed
     user    => $user, # $user is the name of the user which exec this command
-    command => "/usr/bin/wget --timeout=$timeout $src$name", # $src$name is the full link of the file to download
+    command => "/usr/bin/wget --timeout=$timeout $src -O ${name}", # $src$name is the full link of the file to download
     creates => "$destination/$name",
   }
 }

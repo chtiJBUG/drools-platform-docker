@@ -1,8 +1,18 @@
-class postgresql::install ($tablespacedir, $platform, $guvnor, $guvnor_psswd, $platform_psswd) {
+class postgresql::install (
+  $tablespacedir,
+  $platform,
+  $guvnor,
+  $guvnor_psswd,
+  $platform_psswd,
+  $security_db,
+  $security_password,
+  $security_user) {
+    
   $ipnetwork = '127.0.0.1/32'
   $portpsql = '3306'
 
   package { 'postgresql-9.3': ensure => installed } # install the package postgresql-9.3s
+
 
 
   service { 'postgresql': # runs postgresql at boot
@@ -25,16 +35,22 @@ class postgresql::install ($tablespacedir, $platform, $guvnor, $guvnor_psswd, $p
     require => [File["${tablespacedir}"]],
   }
 
-  file { ["/tmp/create_${guvnor}_user.sql"]: # create script sql from template
+  file { ["/tmp/create_guvnor_user.sql"]: # create script sql from template
     ensure  => present,
-    content => template("postgresql/create_${guvnor}_user.sql.erb"),
+    content => template("postgresql/create_guvnor_user.sql.erb"),
     owner   => 'postgres',
     require => [Package['postgresql-9.3']],
   }
 
-  file { ["/tmp/create_${platform}_user.sql"]: # create script sql from template
+  file { ["/tmp/create_platform_user.sql"]: # create script sql from template
     ensure  => present,
-    content => template("postgresql/create_${platform}_user.sql.erb"),
+    content => template("postgresql/create_platform_user.sql.erb"),
+    owner   => 'postgres',
+    require => [Package['postgresql-9.3']],
+  }
+  file { ["/tmp/create_guvnor_security.sql"]: # create script sql from template
+    ensure  => present,
+    content => template("postgresql/create_guvnor_security.sql.erb"),
     owner   => 'postgres',
     require => [Package['postgresql-9.3']],
   }
