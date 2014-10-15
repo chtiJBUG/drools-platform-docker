@@ -3,6 +3,8 @@ class tomcat7::install (
   $jdbc,
   $jdbc_source,
   $login_source,
+  $dbutils_source,
+  $dbutils,
   $login,
   $designer,
   $drools_guvnor,
@@ -114,7 +116,7 @@ class tomcat7::install (
     require     => [Package['tomcat7']],
     notify      => Service['tomcat7'],
   }
-  # download drools-platform-login.jar :
+  # download pgsql-jdbc.jar :
   lib::wget { "${jdbc}":
     destination => '/usr/share/tomcat7/lib/',
     user        => 'root',
@@ -122,7 +124,14 @@ class tomcat7::install (
     require     => [Package['tomcat7']],
     notify      => Service['tomcat7'],
   }
-
+ # download DBUtils.war :
+  lib::wget { "${dbutils}":
+    destination => '/usr/share/tomcat7/lib',
+    user        => 'tomcat7',
+    src         => "${dbutils_source}",
+    require     => [Package['tomcat7']],
+    notify      => Service['tomcat7'],
+  } 
   # download drools-platform-ui.war :
   lib::wget { "${drools_platform}":
     destination => '/var/lib/tomcat7/webapps/',

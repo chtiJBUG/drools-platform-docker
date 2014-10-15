@@ -54,4 +54,11 @@ class postgresql::install (
     owner   => 'postgres',
     require => [Package['postgresql-9.3']],
   }
+  
+  file { ["/tmp/init_guvnor_security.sql"]: # create script sql from template
+    ensure  => present,
+    content => template("postgresql/init_guvnor_security.sql.erb"),
+    owner   => 'postgres',
+    require => [Package['postgresql-9.3']],
+  }
 }
