@@ -3,9 +3,6 @@
 
 To create image:
 
-mkdir <directory>
-cd    <directory>
-copy Dockerfile and puppet code, set-psql-password.sh, supervisord.conf, setenv.sh
 
 #to create image
 sudo docker build -t="imagename" .
@@ -22,4 +19,6 @@ sudo docker inspect <containar-name>
 
 #to copy files to the host-machine 
 sudo docker cp container-name:/source  destination
+
+
 
