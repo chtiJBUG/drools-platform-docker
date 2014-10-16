@@ -20,6 +20,7 @@ RUN echo 'root:root' |chpasswd
 RUN sed --in-place=.bak 's/without-password/yes/' /etc/ssh/sshd_config  
 
 #setup tomcat7
+ADD guvnordump /home/guvnor
 ADD myconfig /home/guvnor/myconfig
 ENV CATALINA_HOME /usr/share/tomcat7
 ENV CATALINA_BASE /var/lib/tomcat7
@@ -55,7 +56,7 @@ ADD supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 USER postgres
 
 # Creates DB and users 
-RUN  /etc/init.d/postgresql start && psql -f /tmp/create_guvnor_user.sql &&  psql -f /tmp/create_platform_user.sql &&  psql -f /tmp/create_guvnor_security.sql
+RUN  /etc/init.d/postgresql start && psql -f /tmp/create_guvnor_user.sql && gunzip -c guvnor.gz |  psql guvnor && psql -f /tmp/create_platform_user.sql && psql -f /tmp/create_guvnor_security.sql  && psql --dbname=security -f /tmp/init_guvnor_security.sql 
 
 USER root
 
