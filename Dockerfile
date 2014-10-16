@@ -55,8 +55,9 @@ ADD supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
 USER postgres
 
-# Creates DB and users 
+# Creates DB and user
 RUN  /etc/init.d/postgresql start && psql -f /tmp/create_guvnor_user.sql && gunzip -c guvnor.gz |  psql guvnor && psql -f /tmp/create_platform_user.sql && psql -f /tmp/create_guvnor_security.sql  && psql --dbname=security -f /tmp/init_guvnor_security.sql 
+
 
 USER root
 
