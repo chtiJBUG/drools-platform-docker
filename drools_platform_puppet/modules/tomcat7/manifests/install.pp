@@ -29,19 +29,19 @@ class tomcat7::install (
   }
 
   # creates directory /home/guvnor
-  file { "/home/$postgresql::install::guvnor":
+  file { "/home/$pgsqldpf::install::guvnor":
     ensure  => directory,
     owner   => 'tomcat7',
     mode    => '0664',
     require => [Package["tomcat7"]],
   }
 
-  file { "/home/$postgresql::install::guvnor/repository.xml": # create file from template
+  file { "/home/$pgsqldpf::install::guvnor/repository.xml": # create file from template
     ensure  => present,
     owner   => 'tomcat7',
     mode    => '0664',
     content => template('tomcat7/repository.xml.erb'),
-    require => File["/home/$postgresql::install::guvnor"]
+    require => File["/home/$pgsqldpf::install::guvnor"]
   }
 
   file { "/var/lib/tomcat7/conf/tomcat-users.xml": # create file from template
@@ -95,7 +95,7 @@ class tomcat7::install (
     destination => '/var/lib/tomcat7/webapps/',
     user        => 'tomcat7',
     src         => maven_to_link("${guvnor_source}"),
-    require     => [Package['tomcat7']],
+    require     => [Package['tomcat7'],lib::wget ["${login}"]],
     notify      => Service['tomcat7'],
   }
 
@@ -113,8 +113,7 @@ class tomcat7::install (
     destination => '/usr/share/tomcat7/lib/',
     user        => 'root',
     src         => maven_to_link("${login_source}"),
-    require     => [Package['tomcat7']],
-    notify      => Service['tomcat7'],
+    require     => [Package['tomcat7'],lib::wget ["${dbutils}"],lib::wget ["${jdbc}"]],
   }
   # download pgsql-jdbc.jar :
   lib::wget { "${jdbc}":
@@ -122,13 +121,12 @@ class tomcat7::install (
     user        => 'root',
     src         => "$jdbc_source",
     require     => [Package['tomcat7']],
-    notify      => Service['tomcat7'],
   }
  # download DBUtils.war :
   lib::wget { "${dbutils}":
     destination => '/usr/share/tomcat7/lib',
-    user        => 'tomcat7',
-    src         => "${dbutils_source}",
+    user        => 'root',
+    src         => "$dbutils_source",
     require     => [Package['tomcat7']],
     notify      => Service['tomcat7'],
   } 

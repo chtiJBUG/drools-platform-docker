@@ -25,9 +25,9 @@
     -->
     <FileSystem class="org.apache.jackrabbit.core.fs.db.DbFileSystem">
   <param name="driver" value="org.postgresql.Driver"/>
-    <param name="url" value="jdbc:postgresql://localhost/<%=scope['postgresql::install::guvnor']%>" />
-    <param name="user" value="<%= scope['postgresql::install::guvnor'] %>" />
-    <param name="password" value="<%= scope['postgresql::install::guvnor_psswd'] %>" />
+    <param name="url" value="jdbc:postgresql://localhost/<%=scope['pgsqldpf::install::guvnor']%>" />
+    <param name="user" value="<%= scope['pgsqldpf::install::guvnor'] %>" />
+    <param name="password" value="<%= scope['pgsqldpf::install::guvnor_psswd'] %>" />
   <param name="schema" value="postgresql"/>
   <param name="schemaObjectPrefix" value="FS_"/>
     </FileSystem>
@@ -72,9 +72,9 @@
 
     <FileSystem class="org.apache.jackrabbit.core.fs.db.DbFileSystem">
       <param name="driver" value="org.postgresql.Driver"/>
-           <param name="url" value="jdbc:postgresql://localhost/<%=scope['postgresql::install::guvnor']%>"/>
-           <param name="user" value="<%=scope['postgresql::install::guvnor']%>"/>
-           <param name="password" value="<%=scope['postgresql::install::guvnor_psswd']%>"/>
+           <param name="url" value="jdbc:postgresql://localhost/<%=scope['pgsqldpf::install::guvnor']%>"/>
+           <param name="user" value="<%=scope['pgsqldpf::install::guvnor']%>"/>
+           <param name="password" value="<%=scope['pgsqldpf::install::guvnor_psswd']%>"/>
       <param name="schema" value="postgresql"/>
       <param name="schemaObjectPrefix" value="FS_WS_${wsp.name}_"/>
     </FileSystem>
@@ -85,9 +85,9 @@
         -->
     <PersistenceManager class="org.apache.jackrabbit.core.persistence.bundle.PostgreSQLPersistenceManager">
       <param name="driver" value="org.postgresql.Driver"/>
-           <param name="url" value="jdbc:postgresql://localhost/<%=scope['postgresql::install::guvnor']%>"/>
-           <param name="user" value="<%=scope['postgresql::install::guvnor']%>"/>
-           <param name="password" value="<%=scope['postgresql::install::guvnor_psswd']%>"/>
+           <param name="url" value="jdbc:postgresql://localhost/<%=scope['pgsqldpf::install::guvnor']%>"/>
+           <param name="user" value="<%=scope['pgsqldpf::install::guvnor']%>"/>
+           <param name="password" value="<%=scope['pgsqldpf::install::guvnor_psswd']%>"/>
       <param name="schema" value="postgresql"/>
       <param name="schemaObjectPrefix" value="PM_WS_${wsp.name}_" />
     </PersistenceManager>
@@ -115,9 +115,9 @@
 
         <FileSystem class="org.apache.jackrabbit.core.fs.db.DbFileSystem">
       <param name="driver" value="org.postgresql.Driver"/>
-           <param name="url" value="jdbc:postgresql://localhost/<%=scope['postgresql::install::guvnor']%>"/>
-           <param name="user" value="<%=scope['postgresql::install::guvnor']%>"/>
-           <param name="password" value="<%=scope['postgresql::install::guvnor_psswd']%>"/>
+           <param name="url" value="jdbc:postgresql://localhost/<%=scope['pgsqldpf::install::guvnor']%>"/>
+           <param name="user" value="<%=scope['pgsqldpf::install::guvnor']%>"/>
+           <param name="password" value="<%=scope['pgsqldpf::install::guvnor_psswd']%>"/>
       <param name="schema" value="postgresql"/>
       <param name="schemaObjectPrefix" value="Versioning_FS_"/>
     </FileSystem>
@@ -130,9 +130,9 @@
         -->
     <PersistenceManager class="org.apache.jackrabbit.core.persistence.bundle.PostgreSQLPersistenceManager">
       <param name="driver" value="org.postgresql.Driver"/>
-           <param name="url" value="jdbc:postgresql://localhost/<%=scope['postgresql::install::guvnor']%>"/>
-           <param name="user" value="<%=scope['postgresql::install::guvnor']%>"/>
-           <param name="password" value="<%=scope['postgresql::install::guvnor_psswd']%>"/>
+           <param name="url" value="jdbc:postgresql://localhost/<%=scope['pgsqldpf::install::guvnor']%>"/>
+           <param name="user" value="<%=scope['pgsqldpf::install::guvnor']%>"/>
+           <param name="password" value="<%=scope['pgsqldpf::install::guvnor_psswd']%>"/>
       <param name="schema" value="postgresql"/>
       <param name="schemaObjectPrefix" value="Versioning_PM_" />
     </PersistenceManager>
