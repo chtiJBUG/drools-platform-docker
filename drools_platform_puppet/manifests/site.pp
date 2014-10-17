@@ -38,28 +38,36 @@ node default {
 
   postgresql::server::tablespace { 'loyaltyweb': location => '/var/lib/postgresql/9.3/loyaltyweb' }
 
+ 
+
   postgresql::server::db { 'guvnor':
     user       => 'guvnor',
     password   => 'guvnor',
-    tablespace => "guvnor"
+    tablespace => "guvnor",
+    owner =>'guvnor'
   }
+
 
   postgresql::server::db { 'platform':
     user       => 'platform',
     password   => 'platform',
-    tablespace => "platform"
+    tablespace => "platform",
+    owner =>'platform'
   }
+
 
   postgresql::server::db { 'security':
     user       => 'security',
     password   => 'security',
-    tablespace => "security"
+    tablespace => "security",
+    owner =>'security'
   }
 
   postgresql::server::db { 'loyaltyweb':
     user       => 'loyaltyweb',
     password   => 'loyaltyweb',
-    tablespace => "loyaltyweb"
+    tablespace => "loyaltyweb",
+    owner =>'loyaltyweb'
   }
 
   class { 'pgsqldpf::install':

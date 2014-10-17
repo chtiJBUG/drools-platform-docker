@@ -49,7 +49,6 @@ class tomcat7::install (
     replace => true,
     owner   => 'tomcat7',
     mode    => '0664',
-    notify  => Service['tomcat7'],
     content => template('tomcat7/tomcat-users.xml.erb'),
     require => [Package['tomcat7', 'tomcat7-admin']],
   }
@@ -78,7 +77,7 @@ class tomcat7::install (
     source  => 'puppet:///modules/tomcat7/context.xml',
     owner   => tomcat7,
     mode    => 664,
-    require => Package['tomcat7']
+    require => [Package['tomcat7'],file [ "/var/lib/tomcat7/conf/server.xml"]]
   }
 
   file { "/usr/share/tomcat7/bin/setenv.sh":
@@ -87,7 +86,7 @@ class tomcat7::install (
     source  => 'puppet:///modules/tomcat7/setenv.sh',
     owner   => tomcat7,
     mode    => 774,
-    require => Package['tomcat7']
+    require => [ Package['tomcat7'],file [ "/var/lib/tomcat7/conf/server.xml"]]
   }
 
   # download drools-guvnor.war :
@@ -95,8 +94,7 @@ class tomcat7::install (
     destination => '/var/lib/tomcat7/webapps/',
     user        => 'tomcat7',
     src         => maven_to_link("${guvnor_source}"),
-    require     => [Package['tomcat7'],lib::wget ["${login}"]],
-    notify      => Service['tomcat7'],
+    require     => [Package['tomcat7'],lib::wget ["${login}"],file [ "/usr/share/tomcat7/bin/setenv.sh"],file [ "/home/$pgsqldpf::install::guvnor"]],
   }
 
   # download designer.war :
@@ -105,7 +103,6 @@ class tomcat7::install (
     user        => 'tomcat7',
     src         => maven_to_link("${designer_source}"),
     require     => [Package['tomcat7']],
-    notify      => Service['tomcat7'],
   }
 
   # download drools-platform-login.jar :
@@ -113,7 +110,7 @@ class tomcat7::install (
     destination => '/usr/share/tomcat7/lib/',
     user        => 'root',
     src         => maven_to_link("${login_source}"),
-    require     => [Package['tomcat7'],lib::wget ["${dbutils}"],lib::wget ["${jdbc}"]],
+    require     => [Package['tomcat7'],lib::wget ["${dbutils}"],lib::wget ["${jdbc}"],file [ "/usr/share/tomcat7/bin/setenv.sh"]],
   }
   # download pgsql-jdbc.jar :
   lib::wget { "${jdbc}":
@@ -128,15 +125,13 @@ class tomcat7::install (
     user        => 'root',
     src         => "$dbutils_source",
     require     => [Package['tomcat7']],
-    notify      => Service['tomcat7'],
   } 
   # download drools-platform-ui.war :
   lib::wget { "${drools_platform}":
     destination => '/var/lib/tomcat7/webapps/',
     user        => 'tomcat7',
     src         => maven_to_link("${drools_platform_source}"),
-    require     => [Package['tomcat7', 'tomcat7-admin']],
-    notify      => Service['tomcat7'],
+    require     => [Package['tomcat7', 'tomcat7-admin'],lib::wget ["${login}"],file [ "/usr/share/tomcat7/bin/setenv.sh"]],
   }
 
 }

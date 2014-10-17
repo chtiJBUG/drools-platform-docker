@@ -1,5 +1,5 @@
 
-
+set role loyaltyweb;
 
 CREATE TABLE product_list
 (

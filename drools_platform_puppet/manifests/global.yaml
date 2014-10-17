@@ -18,3 +18,5 @@ tomcat7::install::guvnor_source:           "org.chtijbug.drools:drools-platform-
 pgsqldpf::install::platform:             "platform"
 pgsqldpf::install::platform_psswd:       "platform"
 pgsqldpf::install::tablespacedir:        "/var/lib/postgresql/9.3/myspace/"
+pgsqldpf::install::loyalty_user:             "loyaltyweb"
+pgsqldpf::install::loyalty_passwd:       "loyaltyweb"
