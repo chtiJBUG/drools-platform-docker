@@ -12,28 +12,51 @@ class tomcat7::install (
   $designer_source,
   $drools_platform,
   $drools_platform_source) {
-  package { 'tomcat7': ensure => installed } # install the package tomcat7
-
-
-
-  package { 'tomcat7-admin': # install the package tomcat7-admin
-    ensure  => installed,
-    require => Package['tomcat7']
+  user { "tomcat7":
+    ensure     => "present",
+    managehome => true,
   }
 
-  service { 'tomcat7': # run the package tomcat7 in at boot
-    ensure     => stopped,
-    enable     => true,
-    hasrestart => true,
-    require    => [Package['tomcat7', 'tomcat7-admin'], Package['openjdk-7-jdk']],
+  lib::wget { "apache-tomcat-7.0.56.tar.gz":
+    destination => '/home/tomcat7',
+    user        => 'tomcat7',
+    src         => "http://archive.apache.org/dist/tomcat/tomcat-7/v7.0.56/bin/apache-tomcat-7.0.56.tar.gz",
+    require     => [Package['openjdk-7-jdk'], user["tomcat7"]],
   }
+
+  exec { "unzip tomcat":
+    command => "tar xvfz  /home/tomcat7/apache-tomcat-7.0.56.tar.gz -C /home/tomcat7 && mv /home/tomcat7/apache-tomcat-7.0.56 /home/tomcat7/apache-tomcat-7.0 ",
+    path    => "/usr/local/bin/:/bin/:/usr/sbin/:/usr/bin",
+    require => [lib::wget["apache-tomcat-7.0.56.tar.gz"]],
+    user    => "tomcat7"
+  }
+
+  file { "/home/tomcat7/apache-tomcat-7.0/bin/catalina.sh":
+    mode    => 755,
+    require => [exec["unzip tomcat"]],
+  }
+
+  # package { 'tomcat7': ensure => installed } # install the package tomcat7
+
+
+  # package { 'tomcat7-admin': # install the package tomcat7-admin
+  #   ensure  => installed,
+  #   require => Package['tomcat7']
+  #  }
+
+  #  service { 'tomcat7': # run the package tomcat7 in at boot
+  #    ensure     => stopped,
+  #   enable     => true,
+  #   hasrestart => true,
+  #   require    => [Package['tomcat7', 'tomcat7-admin'], Package['openjdk-7-jdk']],
+  #}
 
   # creates directory /home/guvnor
   file { "/home/$pgsqldpf::install::guvnor":
     ensure  => directory,
     owner   => 'tomcat7',
     mode    => '0664',
-    require => [Package["tomcat7"]],
+    require => [exec["unzip tomcat"]],
   }
 
   file { "/home/$pgsqldpf::install::guvnor/repository.xml": # create file from template
@@ -44,94 +67,105 @@ class tomcat7::install (
     require => File["/home/$pgsqldpf::install::guvnor"]
   }
 
-  file { "/var/lib/tomcat7/conf/tomcat-users.xml": # create file from template
+  file { "/home/tomcat7/apache-tomcat-7.0/conf/tomcat-users.xml": # create file from template
     ensure  => present,
     replace => true,
     owner   => 'tomcat7',
     mode    => '0664',
     content => template('tomcat7/tomcat-users.xml.erb'),
-    require => [Package['tomcat7', 'tomcat7-admin']],
+    require => [exec["unzip tomcat"]],
   }
 
-  file { "/var/lib/tomcat7/conf/jaasConfig":
+  file { "/home/tomcat7/apache-tomcat-7.0/conf/jaasConfig":
     ensure  => present,
     replace => true,
     source  => 'puppet:///modules/tomcat7/jaasConfig',
     owner   => tomcat7,
     mode    => 664,
-    require => Package['tomcat7']
+    require => exec["unzip tomcat"]
   }
 
-  file { "/var/lib/tomcat7/conf/server.xml":
+  file { "/home/tomcat7/apache-tomcat-7.0/conf/server.xml":
     ensure  => present,
     replace => true,
     source  => 'puppet:///modules/tomcat7/server.xml',
     owner   => tomcat7,
     mode    => 664,
-    require => Package['tomcat7']
+    require => exec["unzip tomcat"]
   }
 
-  file { "/var/lib/tomcat7/conf/context.xml":
+  file { "/home/tomcat7/apache-tomcat-7.0/conf/context.xml":
     ensure  => present,
     replace => true,
     source  => 'puppet:///modules/tomcat7/context.xml',
     owner   => tomcat7,
     mode    => 664,
-    require => [Package['tomcat7'],file [ "/var/lib/tomcat7/conf/server.xml"]]
+    require => [exec["unzip tomcat"], file["/home/tomcat7/apache-tomcat-7.0/conf/server.xml"]]
   }
 
-  file { "/usr/share/tomcat7/bin/setenv.sh":
+  file { "/home/tomcat7/apache-tomcat-7.0/bin/setenv.sh":
     ensure  => present,
     replace => true,
     source  => 'puppet:///modules/tomcat7/setenv.sh',
     owner   => tomcat7,
     mode    => 774,
-    require => [ Package['tomcat7'],file [ "/var/lib/tomcat7/conf/server.xml"]]
+    require => [exec["unzip tomcat"], file["/home/tomcat7/apache-tomcat-7.0/conf/server.xml"]]
   }
 
   # download drools-guvnor.war :
   lib::wget { "${drools_guvnor}":
-    destination => '/var/lib/tomcat7/webapps/',
+    destination => '/home/tomcat7/apache-tomcat-7.0/webapps/',
     user        => 'tomcat7',
     src         => maven_to_link("${guvnor_source}"),
-    require     => [Package['tomcat7'],lib::wget ["${login}"],file [ "/usr/share/tomcat7/bin/setenv.sh"],file [ "/home/$pgsqldpf::install::guvnor"]],
+    require     => [
+      exec["unzip tomcat"],
+      lib::wget["${login}"],
+      file["/home/tomcat7/apache-tomcat-7.0/bin/setenv.sh"],
+      file["/home/$pgsqldpf::install::guvnor"]],
   }
 
   # download designer.war :
   lib::wget { "${designer}":
-    destination => '/var/lib/tomcat7/webapps/',
+    destination => '/home/tomcat7/apache-tomcat-7.0/webapps/',
     user        => 'tomcat7',
     src         => maven_to_link("${designer_source}"),
-    require     => [Package['tomcat7']],
+    require     => [exec["unzip tomcat"]],
   }
 
   # download drools-platform-login.jar :
   lib::wget { "${login}":
-    destination => '/usr/share/tomcat7/lib/',
+    destination => '/home/tomcat7/apache-tomcat-7.0/lib/',
     user        => 'root',
     src         => maven_to_link("${login_source}"),
-    require     => [Package['tomcat7'],lib::wget ["${dbutils}"],lib::wget ["${jdbc}"],file [ "/usr/share/tomcat7/bin/setenv.sh"]],
+    require     => [
+      exec["unzip tomcat"],
+      lib::wget["${dbutils}"],
+      lib::wget["${jdbc}"],
+      file["/home/tomcat7/apache-tomcat-7.0/bin/setenv.sh"]],
   }
+
   # download pgsql-jdbc.jar :
   lib::wget { "${jdbc}":
-    destination => '/usr/share/tomcat7/lib/',
+    destination => '/home/tomcat7/apache-tomcat-7.0/lib/',
     user        => 'root',
     src         => "$jdbc_source",
-    require     => [Package['tomcat7']],
+    require     => [exec["unzip tomcat"]],
   }
- # download DBUtils.war :
+
+  # download DBUtils.war :
   lib::wget { "${dbutils}":
-    destination => '/usr/share/tomcat7/lib',
+    destination => '/home/tomcat7/apache-tomcat-7.0/lib',
     user        => 'root',
     src         => "$dbutils_source",
-    require     => [Package['tomcat7']],
-  } 
+    require     => [exec["unzip tomcat"]],
+  }
+
   # download drools-platform-ui.war :
   lib::wget { "${drools_platform}":
-    destination => '/var/lib/tomcat7/webapps/',
+    destination => '/home/tomcat7/apache-tomcat-7.0/webapps/',
     user        => 'tomcat7',
     src         => maven_to_link("${drools_platform_source}"),
-    require     => [Package['tomcat7', 'tomcat7-admin'],lib::wget ["${login}"],file [ "/usr/share/tomcat7/bin/setenv.sh"]],
+    require     => [exec["unzip tomcat"], lib::wget["${login}"], file["/home/tomcat7/apache-tomcat-7.0/bin/setenv.sh"]],
   }
 
 }

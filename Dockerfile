@@ -10,7 +10,7 @@ ENV DEBIAN_FRONTEND noninteractive
 ENV INITRD No
 
 #install
-RUN apt-get install -y wget openssh-server supervisor openjdk-7-jdk tomcat7 postgresql-9.3
+RUN apt-get install -y wget openssh-server supervisor openjdk-7-jdk postgresql-9.3
 #openssh-server supervisor openjdk-7-jdk tomcat7 postgresql-9.3 
 #RUN mkdir -p /var/run/sshd /var/log/supervisor
 
@@ -23,10 +23,10 @@ RUN apt-get install -y wget openssh-server supervisor openjdk-7-jdk tomcat7 post
 #setup tomcat7
 ADD guvnordump /home/guvnor
 ADD myconfig /home/guvnor/myconfig
-ENV CATALINA_HOME /usr/share/tomcat7
-ENV CATALINA_BASE /var/lib/tomcat7
+ENV CATALINA_HOME /home/tomcat7/apache-tomcat-7.0
+ENV CATALINA_BASE /home/tomcat7/apache-tomcat-7.0
 ENV CATALINA_PID /var/run/tomcat7.pid
-ENV CATALINA_SH /usr/share/tomcat7/bin/catalina.sh
+ENV CATALINA_SH /home/tomcat7/apache-tomcat-7.0/bin/catalina.sh
 ENV CATALINA_TMPDIR /tmp/tomcat7-tomcat7-tmpRUN
 RUN mkdir -p $CATALINA_TMPDIR
 
