@@ -52,19 +52,19 @@ class tomcat7::install (
   #}
 
   # creates directory /home/guvnor
-  file { "/home/$pgsqldpf::install::guvnor":
+  file { "/home/guvnor":
     ensure  => directory,
     owner   => 'tomcat7',
     mode    => '0664',
     require => [exec["unzip tomcat"]],
   }
 
-  file { "/home/$pgsqldpf::install::guvnor/repository.xml": # create file from template
+  file { "/home/guvnor/repository.xml": # create file from template
     ensure  => present,
     owner   => 'tomcat7',
     mode    => '0664',
     content => template('tomcat7/repository.xml.erb'),
-    require => File["/home/$pgsqldpf::install::guvnor"]
+    require => File["/home/guvnor"]
   }
 
   file { "/home/tomcat7/apache-tomcat-7.0/conf/tomcat-users.xml": # create file from template
@@ -121,7 +121,7 @@ class tomcat7::install (
       exec["unzip tomcat"],
       lib::wget["${login}"],
       file["/home/tomcat7/apache-tomcat-7.0/bin/setenv.sh"],
-      file["/home/$pgsqldpf::install::guvnor"]],
+      file["/home/guvnor"]],
   }
 
   # download designer.war :
