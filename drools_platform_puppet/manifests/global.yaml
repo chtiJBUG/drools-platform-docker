@@ -9,6 +9,15 @@ tomcat7::install::dbutils_source:           "http://central.maven.org/maven2/com
 tomcat7::install::drools_guvnor:           "drools-guvnor.war"
 tomcat7::install::drools_platform:         "drools-platform-ui.war"
 tomcat7::install::drools_platform_source:  "org.chtijbug.drools:drools-platform-manager-ui:1.0.0-SNAPSHOT:war"
+tomcat7::install::loyalty_soap:         	"loyalty-soap-server.war"
+tomcat7::install::loyalty_soap_source:  	"org.chtijbug.drools:loyalty-soap-server:1.0.0-SNAPSHOT:war"
+tomcat7::install::loyalty_web:         		"loyalty-web.war"
+tomcat7::install::loyalty_web_source:  		"org.chtijbug.drools:loyalty-web:1.0.0-SNAPSHOT:war"
+tomcat7::install::swimming_pool:         	"swimming-pool-soap-server.war"
+tomcat7::install::swimming_pool_source:  	"org.chtijbug.drools:swimming-pool-soap-server:1.0.0-SNAPSHOT:war"
+
+
+
 pgsqldpf::install::guvnor:               "guvnor"
 pgsqldpf::install::guvnor_psswd:         "guvnor"
 pgsqldpf::install::security_db:          "security"

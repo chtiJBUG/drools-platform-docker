@@ -55,7 +55,7 @@ node default {
     owner =>'platform'
   }
 
-
+ 
   postgresql::server::db { 'security':
     user       => 'security',
     password   => 'security',
