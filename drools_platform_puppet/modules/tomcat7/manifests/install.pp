@@ -42,20 +42,6 @@ class tomcat7::install (
     require => [exec["unzip tomcat"]],
   }
 
-  # package { 'tomcat7': ensure => installed } # install the package tomcat7
-
-
-  # package { 'tomcat7-admin': # install the package tomcat7-admin
-  #   ensure  => installed,
-  #   require => Package['tomcat7']
-  #  }
-
-  #  service { 'tomcat7': # run the package tomcat7 in at boot
-  #    ensure     => stopped,
-  #   enable     => true,
-  #   hasrestart => true,
-  #   require    => [Package['tomcat7', 'tomcat7-admin'], Package['openjdk-7-jdk']],
-  #}
 
   # creates directory /home/guvnor
   file { "/home/guvnor":

@@ -47,8 +47,8 @@ EXPOSE 8080
 # Expose the PostgreSQL and SSH port
 EXPOSE 22
 EXPOSE 5432
+EXPOSE 61616
 
-##RUN /bin/sh /tmp/set-psql-password.sh
 
 CMD ["/usr/bin/supervisord"]
 
