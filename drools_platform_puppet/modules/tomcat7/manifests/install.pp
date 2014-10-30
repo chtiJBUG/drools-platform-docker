@@ -58,6 +58,15 @@ class tomcat7::install (
     content => template('tomcat7/repository.xml.erb'),
     require => File["/home/guvnor"]
   }
+ 
+  exec { "unzip guvnorzip":
+    command => "tar xvfz  /home/guvnor/guvnor-index.tar.gz -C /home/guvnor",
+    path    => "/usr/local/bin/:/bin/:/usr/sbin/:/usr/bin",
+    require => File["/home/guvnor"],
+    user    => "tomcat7"
+  }
+  
+  
 
   file { "/home/tomcat7/apache-tomcat-7.0/conf/tomcat-users.xml": # create file from template
     ensure  => present,
