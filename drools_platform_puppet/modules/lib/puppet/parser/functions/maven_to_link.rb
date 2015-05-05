@@ -11,11 +11,10 @@ module Puppet::Parser::Functions
       build_link="#{build_link}#{tmp[0].gsub('.','/')}/#{tmp[1]}/"
       if link.include?("SNAPSHOT")
       	temp = link.scan(/\d.\d.\d-#{version.upcase.slice(0..-2)}/)
-     	temp = temp.map(&:inspect).join('').slice(1..-2)
+     	  temp = temp.map(&:inspect).join('').slice(1..-2)
       	build_link="#{build_link}#{temp}/"
-	  	print build_link
       	http = `wget #{build_link} -O -`
-.      	grep = http.split("\n").grep(/#{extension}/)
+      	grep = http.split("\n").grep(/#{extension}/)
 
       	i=0
       	grep.each do |truc|
@@ -33,7 +32,7 @@ module Puppet::Parser::Functions
       	num.each do |trac|
         	num[i]=trac.delete(".").delete("-")
         	i+=1
-     	end
+     	  end
 
       	retval="#{build_link}#{tmp[1]}-#{grep[num.index(num.max)]}.#{extension}"
       else
