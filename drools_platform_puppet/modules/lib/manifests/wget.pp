@@ -1,6 +1,6 @@
 # Wget method
 # default the user who executes the wget is root with a timeout of 10 sec
-define lib::wget ($src, $destination, $timeout = 100, $user = 'root') {
+define lib::wget ($src, $destination, $timeout = 1000, $user = 'root') {
   if !defined(Package['wget']) {
     package { 'wget': ensure => installed } # ensure that wget is present on the machine
   }

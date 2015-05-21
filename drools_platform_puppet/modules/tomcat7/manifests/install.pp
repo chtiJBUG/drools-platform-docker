@@ -23,17 +23,17 @@ class tomcat7::install (
     managehome => true,
   }
 
-  lib::wget { "apache-tomcat-7.0.56.tar.gz":
+  lib::wget { "apache-tomcat-7.0.62.tar.gz":
     destination => '/home/tomcat7',
     user        => 'tomcat7',
-    src         => "http://archive.apache.org/dist/tomcat/tomcat-7/v7.0.56/bin/apache-tomcat-7.0.56.tar.gz",
+    src         => "http://wwwftp.ciril.fr/pub/apache/tomcat/tomcat-7/v7.0.62/bin/apache-tomcat-7.0.62.tar.gz",
     require     => [Package['openjdk-7-jdk'], user["tomcat7"]],
   }
 
   exec { "unzip tomcat":
-    command => "tar xvfz  /home/tomcat7/apache-tomcat-7.0.56.tar.gz -C /home/tomcat7 && mv /home/tomcat7/apache-tomcat-7.0.56 /home/tomcat7/apache-tomcat-7.0 ",
+    command => "tar xvfz  /home/tomcat7/apache-tomcat-7.0.62.tar.gz -C /home/tomcat7 && mv /home/tomcat7/apache-tomcat-7.0.62 /home/tomcat7/apache-tomcat-7.0 ",
     path    => "/usr/local/bin/:/bin/:/usr/sbin/:/usr/bin",
-    require => [lib::wget["apache-tomcat-7.0.56.tar.gz"]],
+    require => [lib::wget["apache-tomcat-7.0.62.tar.gz"]],
     user    => "tomcat7"
   }
 

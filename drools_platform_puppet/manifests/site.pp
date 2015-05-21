@@ -22,7 +22,13 @@ node default {
 
   # include classes from modules
 
-
+  class { 'postgresql::globals':
+    encoding => 'UTF8',
+    #locale  => 'en_US',
+    manage_package_repo => true,
+    postgis_version     => '2.1',
+    version => '9.4',
+  }
   class { 'postgresql::server':
     ip_mask_deny_postgres_user => '0.0.0.0/32',
     ip_mask_allow_all_users    => '0.0.0.0/0',
@@ -30,13 +36,13 @@ node default {
     postgres_password          => 'postgres',
   }
 
-  postgresql::server::tablespace { 'guvnor': location => '/var/lib/postgresql/9.3/guvnor' }
+  postgresql::server::tablespace { 'guvnor': location => '/var/lib/postgresql/9.4/guvnor' }
 
-  postgresql::server::tablespace { 'platform': location => '/var/lib/postgresql/9.3/platform' }
+  postgresql::server::tablespace { 'platform': location => '/var/lib/postgresql/9.4/platform' }
 
-  postgresql::server::tablespace { 'security': location => '/var/lib/postgresql/9.3/security' }
+  postgresql::server::tablespace { 'security': location => '/var/lib/postgresql/9.4/security' }
 
-  postgresql::server::tablespace { 'loyaltyweb': location => '/var/lib/postgresql/9.3/loyaltyweb' }
+  postgresql::server::tablespace { 'loyaltyweb': location => '/var/lib/postgresql/9.4/loyaltyweb' }
 
  
 
