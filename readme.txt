@@ -8,7 +8,7 @@ To create image:
 sudo docker build -t="imagename" .
 
 #to run container as a service
-sudo docker run -d --name container-name -h="hostname" -p 8080 -p 22 -p 5432 image1 (or -p 49155:8080 to avoid random port)
+sudo docker run -d --name container-name -h="hostname" -p 16080:8080 -p 16022:22 -p 16432:5432 -p 16616:61616 imagename
 
 
 #to verify if container is running:
