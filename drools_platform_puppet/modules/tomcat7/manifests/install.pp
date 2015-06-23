@@ -42,7 +42,19 @@ class tomcat7::install (
     require => [exec["unzip tomcat"]],
   }
 
-
+# creates directory /home/guvnor
+  file { "/data":
+    ensure  => directory,
+    owner   => 'tomcat7',
+    mode    => '0664',
+    require => [exec["unzip tomcat"]],
+  }
+  file { "/data/dumps":
+    ensure  => directory,
+    owner   => 'tomcat7',
+    mode    => '0664',
+    require => File["/data"],
+  }
   # creates directory /home/guvnor
   file { "/home/guvnor":
     ensure  => directory,
