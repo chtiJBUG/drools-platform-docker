@@ -1,23 +1,21 @@
-FROM ubuntu:14.04
+FROM ubuntu:14.10
 MAINTAINER Nicolas Heron
 
 ENV REFRESHED_AT 2014-07-24
-RUN apt-get update
-RUN apt-get -y upgrade
 
 # avoid debconf and initrd
 ENV DEBIAN_FRONTEND noninteractive
 ENV INITRD No
 
 #install
-#RUN  sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt/ $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list'
-#RUN apt-get install -y wget ca-certificates
-#RUN wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -
+RUN  sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt/ $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list'
+RUN apt-get install -y wget ca-certificates
+RUN wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -
 RUN apt-get update
 RUN apt-get upgrade  -y
 #RUN apt-get install -y wget openssh-server supervisor openjdk-7-jdk postgresql-9.4
 RUN apt-get install -y wget openssh-server supervisor openjdk-7-jdk
-
+RUN apt-get install -y  postgresql-9.4
 
 #setup tomcat7
 ADD guvnordump /home/guvnor

@@ -26,7 +26,7 @@ class tomcat7::install (
   lib::wget { "apache-tomcat-7.0.62.tar.gz":
     destination => '/home/tomcat7',
     user        => 'tomcat7',
-    src         => "http://wwwftp.ciril.fr/pub/apache/tomcat/tomcat-7/v7.0.62/bin/apache-tomcat-7.0.62.tar.gz",
+    src         => "http://archive.apache.org/dist/tomcat/tomcat-7/v7.0.62/bin/apache-tomcat-7.0.62.tar.gz",
     require     => [Package['openjdk-7-jdk'], user["tomcat7"]],
   }
 
