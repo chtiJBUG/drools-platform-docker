@@ -1,4 +1,4 @@
-FROM ubuntu:14.10
+FROM ubuntu:14.04
 MAINTAINER Nicolas Heron
 
 ENV REFRESHED_AT 2014-07-24
