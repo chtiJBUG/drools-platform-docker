@@ -1,6 +1,6 @@
 case $operatingsystem { # Install only on Ubuntu 14.04 &
   'ubuntu' : {
-    if (!($operatingsystemrelease == '14.10')) {
+    if (!($operatingsystemrelease == '14.04')) {
       fail('Unsupported operating system')
     }
   }
