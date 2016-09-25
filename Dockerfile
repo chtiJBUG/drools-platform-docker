@@ -1,7 +1,7 @@
 FROM ubuntu:14.04
 MAINTAINER Nicolas Heron
 
-ENV REFRESHED_AT 2014-07-24
+ENV REFRESHED_AT 2016-09-24
 
 # avoid debconf and initrd
 ENV DEBIAN_FRONTEND noninteractive
@@ -34,7 +34,7 @@ RUN dpkg -i puppetlabs-release-trusty.deb
 RUN apt-get update && apt-get install -y puppet
 
 # to copy Puppet code into container
-ADD drools_platform_puppet /drools_platform_puppet 
+ADD drools_platform_puppet /drools_platform_puppet
 RUN puppet module install puppetlabs/postgresql
 
 #to run Puppet code
