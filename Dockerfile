@@ -1,4 +1,4 @@
-FROM ubuntu:14.04
+FROM chtijbug/docker-ubuntu-jdk7:latest 
 MAINTAINER Nicolas Heron
 
 ENV REFRESHED_AT 2016-09-24
@@ -8,15 +8,20 @@ ENV DEBIAN_FRONTEND noninteractive
 ENV INITRD No
 
 #install
-RUN  sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt/ $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list'
+RUN apt-get update
+RUN apt-get install -y software-properties-common
+RUN apt-get install -y python3-software-properties
+RUN apt-get install -y python-software-properties
+RUN apt-get install -y apt-transport-https
+RUN apt-get update
 RUN apt-get install -y wget ca-certificates
+RUN echo 'deb http://apt.postgresql.org/pub/repos/apt/ trusty-pgdg main' | tee -a /etc/apt/sources.list.d/pgdg.list
 RUN wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -
 RUN apt-get update
-RUN apt-get upgrade  -y
-#RUN apt-get install -y wget openssh-server supervisor openjdk-7-jdk postgresql-9.4
-RUN apt-get install -y wget openssh-server supervisor openjdk-7-jdk
-RUN apt-get install -y  postgresql-9.4
-
+RUN apt-get upgrade -y
+RUN apt-get install -y --force-yes wget openssh-server supervisor openjdk-7-jdk postgresql-client-9.4 postgresql-9.4
+RUN echo "Europe/Paris" > /etc/timezone
+RUN dpkg-reconfigure -f noninteractive tzdata
 #setup tomcat7
 ADD guvnordump /home/guvnor
 ADD myconfig /home/guvnor/myconfig
@@ -31,7 +36,7 @@ RUN mkdir -p $CATALINA_TMPDIR
 # to install puppet
 RUN wget https://apt.puppetlabs.com/puppetlabs-release-trusty.deb
 RUN dpkg -i puppetlabs-release-trusty.deb
-RUN apt-get update && apt-get install -y puppet
+RUN apt-get update && apt-get install -y --force-yes puppet 
 
 # to copy Puppet code into container
 ADD drools_platform_puppet /drools_platform_puppet
@@ -52,7 +57,15 @@ EXPOSE 8080
 EXPOSE 22
 EXPOSE 5432
 EXPOSE 61616
-
+USER root
+ADD ./entrypoint.sh /entrypoint.sh
+ADD ./wait-for-postgres.sh /wait-for-postgres.sh
+RUN chmod a+x /entrypoint.sh
+ADD ./workspaces.tar.gz /home/guvnor/workspaces
+ADD ./repository.tar.gz /home/guvnor/repository
+RUN echo "Europe/Paris" > /etc/timezone
+RUN dpkg-reconfigure -f noninteractive tzdata
+WORKDIR /home/guvnor
 
 CMD ["/usr/bin/supervisord"]
 
