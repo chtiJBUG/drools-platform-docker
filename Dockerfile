@@ -19,7 +19,7 @@ RUN echo 'deb http://apt.postgresql.org/pub/repos/apt/ trusty-pgdg main' | tee -
 RUN wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -
 RUN apt-get update
 RUN apt-get upgrade -y
-RUN apt-get install -y --force-yes wget openssh-server supervisor openjdk-7-jdk postgresql-client-9.4 postgresql-9.4
+RUN apt-get install -y --force-yes wget openssh-server supervisor openjdk-7-jdk postgresql-client-9.4 postgresql-9.4 curl
 RUN echo "Europe/Paris" > /etc/timezone
 RUN dpkg-reconfigure -f noninteractive tzdata
 #setup tomcat7
@@ -58,11 +58,6 @@ EXPOSE 22
 EXPOSE 5432
 EXPOSE 61616
 USER root
-ADD ./entrypoint.sh /entrypoint.sh
-ADD ./wait-for-postgres.sh /wait-for-postgres.sh
-RUN chmod a+x /entrypoint.sh
-ADD ./workspaces.tar.gz /home/guvnor/workspaces
-ADD ./repository.tar.gz /home/guvnor/repository
 RUN echo "Europe/Paris" > /etc/timezone
 RUN dpkg-reconfigure -f noninteractive tzdata
 WORKDIR /home/guvnor

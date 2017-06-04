@@ -13,7 +13,7 @@ module Puppet::Parser::Functions
       	temp = link.scan(/\d.\d.\d-#{version.upcase.slice(0..-2)}/)
      	  temp = temp.map(&:inspect).join('').slice(1..-2)
       	build_link="#{build_link}#{temp}/"
-      	http = `wget #{build_link} -O -`
+      	http = `curl #{build_link} -s`
       	grep = http.split("\n").grep(/#{extension}/)
 
       	i=0
